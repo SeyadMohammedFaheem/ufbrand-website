@@ -3,19 +3,31 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search, ShoppingBag, User, Menu, X, Globe, ChevronDown, LogOut } from 'lucide-react'
+import { Search, ShoppingBag, User, Menu, X, Heart, LogOut } from 'lucide-react'
 import { useAuthStore, useCartStore } from '@/lib/store'
 
 export function Navbar() {
   const router = useRouter()
-  const { user, logout } = useAuthStore()
+  const { user, logout, checkIsAdmin } = useAuthStore()
   const { items } = useCartStore()
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [isScrolled, setIsScrolled] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  // Handle scroll for sticky effect
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`)
+      setIsSearchOpen(false)
+      setSearchQuery('')
+    }
+  }
+
   useEffect(() => {
+    setMounted(true)
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
     }
@@ -24,169 +36,216 @@ export function Navbar() {
   }, [])
 
   const navLinks = [
-    'Everyday Steals', 
-    '$50 Cashmere', 
-    'New Arrivals', 
-    'Best Sellers', 
-    'Women', 
-    'Men', 
-    'Home', 
-    'Baby & Kids', 
-    'Travel', 
-    'Bags & Accessories', 
-    'Jewelry', 
-    'Beauty & Wellness', 
-    'Gifts', 
-    'The Archive'
+    { name: 'New Arrivals', href: '/products', badge: 'New', badgeColor: 'bg-blue-100 text-blue-600' },
+    { name: 'Best Sellers', href: '/products', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600' },
+    { name: 'Suits', href: '/products' },
+    { name: 'Kurtas', href: '/products' },
+    { name: 'Fabric', href: '/products' },
+    { name: 'Journal', href: '/blog' },
+    { name: 'Sale', href: '/products', badge: '20% OFF', badgeColor: 'bg-pink-100 text-[#D4147A]' },
   ]
 
   return (
     <>
-      <header className="w-full fixed top-0 left-0 z-[100] transition-all duration-300">
-        {/* 1. ANNOUNCEMENT BAR */}
-        <div className={`bg-[#30323E] px-4 text-center overflow-hidden transition-all duration-300 ${isScrolled ? 'max-h-0 py-0 opacity-0' : 'max-h-10 py-2 opacity-100'}`}>
-          <p className="text-[10px] md:text-[11px] font-bold text-white uppercase tracking-[0.1em]">
-            Free Shipping on all orders over ₹5,000 | Limited Time Offer
-          </p>
-        </div>
+      <header className={`w-full fixed top-0 left-0 z-[100] transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-white border-b border-zinc-100'}`}>
+        {/* Main Nav Container */}
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 h-16 md:h-24 flex items-center justify-between gap-4">
+          
+          {/* 1. Logo Section */}
+          <div className="flex items-center gap-4 flex-shrink-0">
+            <button
+              className="lg:hidden p-1.5 hover:bg-zinc-100 rounded-full transition-colors"
+              onClick={() => setIsMenuOpen(true)}
+            >
+              <Menu size={24} strokeWidth={1.5} />
+            </button>
+            <Link href="/" className="flex items-center group">
+              <img 
+                src="/images/logo.png" 
+                alt="UF BRAND" 
+                className="h-18 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+            </Link>
+          </div>
 
-        {/* 2. MAIN NAVIGATION */}
-        <div className={`w-full transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm' : 'bg-white'}`}>
-          <div className="max-w-[1440px] mx-auto px-4 md:px-10 h-16 md:h-20 flex items-center justify-between gap-4">
-            
-            {/* Left: Mobile Menu & Logo */}
-            <div className="flex items-center gap-6 flex-shrink-0">
-              <button 
-                className="lg:hidden p-1.5 hover:bg-zinc-100 rounded-full transition-colors" 
-                onClick={() => setIsMenuOpen(true)}
-                aria-label="Open Menu"
+          {/* 2. Centered Navigation (Desktop) */}
+          <nav className="hidden lg:flex items-center justify-center flex-grow gap-8">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                href={link.href} 
+                className="relative group flex items-center gap-2 py-2"
               >
-                <Menu size={24} strokeWidth={1.5} />
-              </button>
-              <Link href="/" className="flex items-center group">
-                <span className="text-2xl md:text-3xl font-serif font-black tracking-tight text-black transition-transform duration-300 group-hover:scale-[1.02]">
-                  Quince
+                <span className="text-[13px] font-bold uppercase tracking-widest text-[#30323E] group-hover:text-[#D4147A] transition-colors">
+                  {link.name}
                 </span>
+                {link.badge && (
+                  <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-tighter ${link.badgeColor}`}>
+                    {link.badge}
+                  </span>
+                )}
+                {/* Underline effect */}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#D4147A] transition-all duration-300 group-hover:w-full" />
               </Link>
-              
-              {/* Desktop Quick Links */}
-              <nav className="hidden lg:flex items-center gap-6 ml-8">
-                 <Link href="/products" className="text-xs font-bold uppercase tracking-widest hover:text-[#D4147A] transition-colors">Shop</Link>
-                 <Link href="/about" className="text-xs font-bold uppercase tracking-widest hover:text-[#D4147A] transition-colors">Our Story</Link>
-                 <Link href="/blog" className="text-xs font-bold uppercase tracking-widest hover:text-[#D4147A] transition-colors">Journal</Link>
-              </nav>
-            </div>
+            ))}
+          </nav>
 
-            {/* Center: Search (Desktop Only) */}
-            <div className="hidden lg:flex flex-grow max-w-xl mx-8">
-              <div className="relative w-full group">
-                <input 
-                  type="text" 
-                  placeholder="Search for cashmere, silk, jewelry..."
-                  className="w-full bg-zinc-50 border border-zinc-200 px-5 py-2.5 text-sm outline-none rounded-full focus:bg-white focus:ring-1 focus:ring-[#30323E] transition-all"
-                />
-                <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-zinc-400 group-focus-within:text-black transition-colors">
-                  <Search size={18} strokeWidth={2} />
-                </button>
-              </div>
-            </div>
+          {/* 3. Utilities Section */}
+          <div className="flex items-center gap-1 md:gap-4 flex-shrink-0">
+            {/* Search */}
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700"
+            >
+              <Search size={20} strokeWidth={1.5} />
+            </button>
 
-            {/* Right: Utilities */}
-            <div className="flex items-center gap-2 md:gap-5 flex-shrink-0">
-              {/* Mobile Search */}
-              <button className="lg:hidden p-2 hover:bg-zinc-100 rounded-full transition-colors">
-                <Search size={22} strokeWidth={1.5} />
-              </button>
-
-              {/* User — desktop */}
-              {user ? (
-                <div className="hidden md:flex items-center gap-2">
-                  <span className="text-[11px] font-bold text-zinc-600 uppercase tracking-wider">{user.name.split(' ')[0]}</span>
+            {/* User */}
+            <div className="hidden md:block">
+              {mounted && user ? (
+                <div className="flex items-center gap-1">
+                  {checkIsAdmin() && (
+                    <Link 
+                      href="/admin" 
+                      className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#D4147A] transition-colors mr-2 px-3 py-1 border border-zinc-200 rounded-full"
+                    >
+                      Admin
+                    </Link>
+                  )}
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#30323E]">Hi, {user.name.split(' ')[0]}</span>
                   <button
                     onClick={() => { logout(); router.push('/'); }}
-                    className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-500 hover:text-red-500"
+                    className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700 group relative"
                     title="Sign Out"
                   >
-                    <LogOut size={18} strokeWidth={1.5} />
+                    <User size={20} strokeWidth={1.5} />
+                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-[#30323E] text-white text-[10px] px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Sign Out</span>
                   </button>
                 </div>
               ) : (
-                <Link href="/login" className="hidden md:flex items-center gap-2 px-3 py-2 hover:bg-zinc-100 rounded-full transition-colors">
+                <Link href="/login" className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700">
                   <User size={20} strokeWidth={1.5} />
-                  <span className="text-[11px] font-bold uppercase tracking-wider">Sign In</span>
                 </Link>
               )}
-
-              {/* Cart */}
-              <Link href="/cart" className="p-2 hover:bg-zinc-100 rounded-full transition-colors relative group">
-                <ShoppingBag size={22} strokeWidth={1.5} />
-                {cartCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-[#D4147A] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white group-hover:scale-110 transition-transform">
-                    {cartCount > 9 ? '9+' : cartCount}
-                  </span>
-                )}
-              </Link>
             </div>
-          </div>
 
-          {/* 3. CATEGORY LINKS ROW (DESKTOP ONLY) */}
-          <div className={`hidden lg:block border-t border-zinc-100 transition-all duration-300 ${isScrolled ? 'h-0 opacity-0 overflow-hidden' : 'h-auto opacity-100'}`}>
-            <div className="max-w-[1440px] mx-auto px-10">
-              <nav className="flex items-center justify-between py-4 overflow-x-auto no-scrollbar">
-                {navLinks.map((link) => (
-                  <Link 
-                    key={link} 
-                    href="/products" 
-                    className={`text-[10px] font-bold uppercase tracking-[0.05em] hover:text-[#D4147A] transition-colors whitespace-nowrap ${link === 'Everyday Steals' ? 'text-[#D4147A]' : 'text-zinc-600'}`}
-                  >
-                    {link}
-                  </Link>
-                ))}
-              </nav>
-            </div>
+            {/* Cart */}
+            <Link href="/cart" className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700 relative group">
+              <ShoppingBag size={20} strokeWidth={1.5} />
+              {mounted && cartCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 bg-[#D4147A] text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-white group-hover:scale-110 transition-transform">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Spacer to prevent content jump due to fixed header. Outside the fixed header to actually push content down. */}
-      {/* Mobile: 32px (announcement) + 64px (nav) = 96px */}
-      {/* Desktop: 32px + 80px + 44px (categories) = 156px */}
-      <div className={`w-full transition-all duration-300 ${isScrolled ? 'h-16 md:h-20' : 'h-[96px] md:h-[156px]'}`} />
+      {/* Search Overlay */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-[200] bg-white animate-in fade-in slide-in-from-top duration-500">
+          <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 h-screen flex flex-col">
+            <div className="flex justify-between items-center h-24">
+              <img src="/images/logo.png" alt="UF BRAND" className="h-14 md:h-18 w-auto object-contain" />
+              <button 
+                type="button"
+                onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); }}
+                className="p-3 hover:bg-zinc-100 rounded-full transition-colors relative z-[210]"
+              >
+                <X size={32} strokeWidth={1} />
+              </button>
+            </div>
+            
+            <div className="flex-grow flex flex-col items-center justify-center -mt-24">
+              <form onSubmit={handleSearch} className="w-full max-w-4xl px-4">
+                <div className="relative group">
+                  <input
+                    autoFocus
+                    type="text"
+                    placeholder="WHAT ARE YOU LOOKING FOR?"
+                    className="w-full text-2xl md:text-5xl font-serif border-b-2 border-zinc-200 py-6 focus:outline-none focus:border-[#D4147A] transition-colors placeholder:text-zinc-300 uppercase tracking-tight"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <button 
+                    type="submit"
+                    className="absolute right-0 bottom-6 text-zinc-400 group-focus-within:text-[#D4147A] transition-colors"
+                  >
+                    <Search size={32} strokeWidth={1.5} />
+                  </button>
+                </div>
+                <div className="mt-8 flex flex-wrap gap-4 items-center">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Popular:</span>
+                  {['Kurtas', 'Silk Sarees', 'New Arrivals', 'Festive Edit'].map((term) => (
+                    <button
+                      key={term}
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery(term);
+                        router.push(`/products?search=${encodeURIComponent(term)}`);
+                        setIsSearchOpen(false);
+                      }}
+                      className="text-[11px] font-bold uppercase tracking-widest text-zinc-600 hover:text-[#D4147A] transition-colors underline decoration-zinc-200 underline-offset-4"
+                    >
+                      {term}
+                    </button>
+                  ))}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* MOBILE DRAWER */}
+      {/* Header Spacer */}
+      <div className="h-16 md:h-24 w-full" />
+
+      {/* Mobile Menu Drawer */}
       {isMenuOpen && (
         <>
-          <div className="fixed inset-0 bg-black/40 z-[110] backdrop-blur-sm" onClick={() => setIsMenuOpen(false)} />
+          <div className="fixed inset-0 bg-black/50 z-[110] backdrop-blur-sm" onClick={() => setIsMenuOpen(false)} />
           <div className="fixed inset-y-0 left-0 w-full max-w-[320px] bg-white z-[120] shadow-2xl animate-in slide-in-from-left duration-300">
             <div className="flex flex-col h-full">
               <div className="flex justify-between items-center p-6 border-b border-zinc-100">
-                <span className="text-2xl font-serif font-black tracking-tight">Quince</span>
+                <img src="/images/logo.png" alt="UF BRAND" className="h-10 w-auto object-contain" />
                 <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-zinc-100 rounded-full transition-colors">
                   <X size={24} />
                 </button>
               </div>
-              <div className="flex-grow overflow-y-auto no-scrollbar py-6">
-                <div className="px-6 flex flex-col gap-1">
+              <div className="flex-grow overflow-y-auto py-6">
+                <nav className="flex flex-col">
                   {navLinks.map((link) => (
                     <Link
-                      key={link}
-                      href="/products"
-                      className="py-3 text-[13px] font-bold uppercase tracking-widest text-zinc-800 hover:text-[#D4147A] transition-colors border-b border-zinc-50"
+                      key={link.name}
+                      href={link.href}
+                      className="px-6 py-4 flex items-center justify-between group border-b border-zinc-50"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {link}
+                      <span className="text-sm font-bold uppercase tracking-widest text-[#30323E] group-hover:text-[#D4147A] transition-colors">
+                        {link.name}
+                      </span>
+                      {link.badge && (
+                        <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${link.badgeColor}`}>
+                          {link.badge}
+                        </span>
+                      )}
                     </Link>
                   ))}
-                </div>
+                </nav>
               </div>
               <div className="p-6 border-t border-zinc-100 bg-zinc-50">
                 <div className="flex flex-col gap-4">
-                   <Link href="/login" className="flex items-center gap-3 text-sm font-bold uppercase tracking-wider" onClick={() => setIsMenuOpen(false)}>
+                  {user ? (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-zinc-900 uppercase tracking-wider">Hi, {user.name.split(' ')[0]}</span>
+                      <button onClick={logout} className="text-xs font-bold text-red-500 uppercase tracking-widest">Sign Out</button>
+                    </div>
+                  ) : (
+                    <Link href="/login" className="flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-zinc-800" onClick={() => setIsMenuOpen(false)}>
                       <User size={20} /> Sign In
-                   </Link>
-                   <Link href="/region" className="flex items-center gap-3 text-sm font-bold uppercase tracking-wider" onClick={() => setIsMenuOpen(false)}>
-                      <Globe size={20} /> Shipping to US
-                   </Link>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
@@ -196,4 +255,5 @@ export function Navbar() {
     </>
   )
 }
+
 

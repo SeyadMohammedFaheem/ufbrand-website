@@ -1,27 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-
-const ARTICLES = [
-  {
-    id: 1,
-    category: 'STYLE GUIDE',
-    title: 'The Art of Layering: Transitioning to Fall',
-    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2070&auto=format&fit=crop',
-    excerpt: 'Discover our expert tips on combining textures, weights, and silhouettes to create effortless transitional looks.',
-    link: '/editorial/art-of-layering'
-  },
-  {
-    id: 2,
-    category: 'BEHIND THE BRAND',
-    title: 'Meet the Artisans: Our Silk Weavers',
-    image: 'https://images.unsplash.com/photo-1605763240000-7e93b172d754?q=80&w=1974&auto=format&fit=crop',
-    excerpt: 'Take a journey to the heart of our production process and meet the master craftspeople behind our signature silk pieces.',
-    link: '/editorial/meet-the-artisans'
-  }
-];
+import { blogs } from '@/lib/blogs';
 
 export function RecentEditorial() {
+  // Use the first two blogs for the homepage preview
+  const articles = blogs.slice(0, 2);
+
   return (
     <section className="w-full py-16 md:py-24 bg-white">
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 lg:px-12">
@@ -35,7 +20,7 @@ export function RecentEditorial() {
             <div className="w-16 h-0.5 bg-[#D4147A]"></div>
           </div>
           <Link 
-            href="/editorial" 
+            href="/blog" 
             className="text-xs font-bold uppercase tracking-widest text-[#30323E] hover:text-[#D4147A] transition-colors border-b border-transparent hover:border-[#D4147A] pb-1 inline-block"
           >
             Read All Articles
@@ -44,8 +29,8 @@ export function RecentEditorial() {
 
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          {ARTICLES.map((article) => (
-            <Link key={article.id} href={article.link} className="group flex flex-col">
+          {articles.map((article) => (
+            <Link key={article.slug} href={`/blog/${article.slug}`} className="group flex flex-col">
               {/* Image Container */}
               <div className="w-full aspect-[4/3] overflow-hidden bg-zinc-100 mb-6">
                 <img 
@@ -82,3 +67,4 @@ export function RecentEditorial() {
     </section>
   );
 }
+

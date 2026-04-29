@@ -21,10 +21,10 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="w-full flex flex-col h-[calc(100dvh-96px)] md:h-[calc(100dvh-156px)] bg-[#FAF9F6] overflow-hidden">
+    <section className="w-full relative h-[calc(100dvh-64px)] md:h-[calc(100dvh-96px)] bg-[#FAF9F6] overflow-hidden">
 
       {/* ── MAIN HERO ── */}
-      <div className="flex-1 relative w-full overflow-hidden group">
+      <div className="w-full h-full relative overflow-hidden group">
 
         {/* Background image with slow Ken-Burns zoom */}
         <img
@@ -39,7 +39,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent" />
 
         {/* ── CONTENT ── */}
-        <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-10 md:py-16">
+        <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-10 md:py-16 pb-[60px] md:pb-[70px]">
 
           {/* Headline */}
           <h1
@@ -96,7 +96,7 @@ export function Hero() {
 
         {/* ── Scroll Indicator ── */}
         <div
-          className="absolute bottom-6 right-6 md:bottom-10 md:right-10 flex flex-col items-center gap-2"
+          className="absolute bottom-24 right-6 md:bottom-28 md:right-10 flex flex-col items-center gap-2"
           style={{
             opacity: loaded ? 0.7 : 0,
             transition: 'opacity 1s ease 1.2s',
@@ -121,40 +121,37 @@ export function Hero() {
           <span className="block text-white/70 text-[10px] uppercase tracking-widest">This Week</span>
         </div>
 
-      </div>
-
-      {/* ── MARQUEE STRIP ── (untouched) */}
-      <div className="w-full bg-white border-t border-zinc-200 h-[60px] md:h-[70px] flex-shrink-0 flex items-center overflow-hidden">
-        <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
-
-          {[0, 1].map((gi) => (
-            <div key={gi} className="flex items-center gap-12 md:gap-20 lg:gap-24 px-6 md:px-10 lg:px-12">
-              <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
-                <Feather size={20} strokeWidth={2} className="text-[#D4147A]" />
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Premium Silks</span>
+        {/* ── MARQUEE STRIP (BOTTOM OVERLAY) ── */}
+        <div className="absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-sm border-t border-zinc-200 h-[60px] md:h-[70px] flex items-center overflow-hidden z-10">
+          <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+            {[0, 1].map((gi) => (
+              <div key={gi} className="flex items-center gap-12 md:gap-20 lg:gap-24 px-6 md:px-10 lg:px-12">
+                <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
+                  <Feather size={18} strokeWidth={2} className="text-[#D4147A]" />
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Premium Silks</span>
+                </div>
+                <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
+                  <Leaf size={18} strokeWidth={2} className="text-[#D4147A]" />
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Sustainable Materials</span>
+                </div>
+                <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
+                  <ShieldCheck size={18} strokeWidth={2} className="text-[#D4147A]" />
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Ethical Production</span>
+                </div>
+                <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
+                  <Truck size={18} strokeWidth={2} className="text-[#D4147A]" />
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Free Shipping</span>
+                </div>
+                <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
+                  <RefreshCcw size={18} strokeWidth={2} className="text-[#D4147A]" />
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">365-Day Returns</span>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
-                <Leaf size={20} strokeWidth={2} className="text-[#D4147A]" />
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Sustainable Materials</span>
-              </div>
-              <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
-                <ShieldCheck size={20} strokeWidth={2} className="text-[#D4147A]" />
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Ethical Production</span>
-              </div>
-              <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
-                <Truck size={20} strokeWidth={2} className="text-[#D4147A]" />
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Free Shipping</span>
-              </div>
-              <div className="flex items-center gap-3 text-[#30323E] whitespace-nowrap">
-                <RefreshCcw size={20} strokeWidth={2} className="text-[#D4147A]" />
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest">365-Day Returns</span>
-              </div>
-            </div>
-          ))}
-
+            ))}
+          </div>
         </div>
-      </div>
 
+      </div>
     </section>
   );
 }

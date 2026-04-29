@@ -6,23 +6,23 @@ import { Accordion } from '@/components/ui/Accordion';
 import { useCartStore } from '@/lib/store';
 
 export function ProductInfo({ product }) {
-  const [selectedSize, setSelectedSize] = useState('');
   const [added, setAdded] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
   const { addItem } = useCartStore();
 
   const handleAddToCart = () => {
-    if (!selectedSize && product.sizes?.length > 0) {
+    if (product.sizes?.length > 0 && !selectedSize) {
       alert('Please select a size first.');
       return;
     }
-    addItem(product, selectedSize);
+    addItem(product, selectedSize || 'Standard');
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   return (
     <div className="flex flex-col w-full">
-      {/* Breadcrumbs */}
+      {/* ... (Breadcrumbs, Header, Price, etc. omitted for brevity in diff) */}
       <nav className="flex items-center gap-2 text-[10px] md:text-xs text-zinc-500 uppercase tracking-widest mb-6">
         <a href="/" className="hover:text-[#D4147A] transition-colors">Home</a>
         <span>/</span>
@@ -31,7 +31,6 @@ export function ProductInfo({ product }) {
         <span className="text-zinc-900 font-bold line-clamp-1">{product.title}</span>
       </nav>
 
-      {/* Header Info */}
       <div className="flex justify-between items-start gap-4 mb-4">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-black text-[#30323E] leading-[1.2] tracking-tight">
           {product.title}
@@ -41,7 +40,6 @@ export function ProductInfo({ product }) {
         </button>
       </div>
 
-      {/* Price */}
       <div className="flex items-center gap-3 mb-6">
         {product.originalPrice && (
           <span className="text-zinc-400 line-through text-base md:text-lg">
@@ -58,31 +56,38 @@ export function ProductInfo({ product }) {
         )}
       </div>
 
-      {/* Taxes text */}
       <p className="text-xs text-zinc-500 font-light mb-8">Inclusive of all taxes</p>
 
-      {/* Size Selector */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-[#30323E]">Select Size</h3>
-          <button className="text-[11px] text-zinc-500 underline uppercase tracking-widest hover:text-[#D4147A]">Size Guide</button>
+      {/* Sizing Section */}
+      {product.sizes && product.sizes.length > 0 && (
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#30323E]">
+              {product.sizeLabel || 'Select Size'}
+            </span>
+            {product.type !== 'FABRIC' && (
+              <button className="text-[10px] font-black uppercase tracking-widest text-[#D4147A] hover:underline">
+                Size Guide
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {product.sizes.map((size) => (
+              <button
+                key={size}
+                onClick={() => setSelectedSize(size)}
+                className={`min-w-[48px] h-12 flex items-center justify-center border text-xs font-black transition-all ${
+                  selectedSize === size
+                    ? 'border-[#30323E] bg-[#30323E] text-white shadow-lg'
+                    : 'border-zinc-200 text-zinc-900 hover:border-[#30323E]'
+                } ${product.isFabric ? 'px-6' : ''}`}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-3">
-          {product.sizes.map((size) => (
-            <button
-              key={size}
-              onClick={() => setSelectedSize(size)}
-              className={`w-12 h-12 rounded-full border flex items-center justify-center text-xs font-bold transition-all ${
-                selectedSize === size
-                  ? 'border-[#D4147A] bg-[#D4147A] text-white shadow-md'
-                  : 'border-zinc-300 text-zinc-700 hover:border-[#30323E] hover:text-[#30323E]'
-              }`}
-            >
-              {size}
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Action Buttons */}
       <div className="flex flex-col gap-3 mb-10">
@@ -100,13 +105,12 @@ export function ProductInfo({ product }) {
         </button>
         <a 
           href={(() => {
-            const size = selectedSize || 'Not selected';
+            const sizeInfo = selectedSize ? `\n📏 Size: ${selectedSize}` : '';
             const msg =
               `Hello! I'd like to order this item from UFBrand:\n\n` +
               `🛍️ *${product.title}*\n` +
-              `💰 Price: ${product.currentPrice}\n` +
-              `📏 Size: ${size}\n` +
-              `🖼️ Image: ${product.image}\n\n` +
+              `💰 Price: ${product.currentPrice}${sizeInfo}\n` +
+              `🖼️ Image: ${product.images?.[0] || ''}\n\n` +
               `Please confirm availability and share payment details. Thank you!`;
             return `https://wa.me/916379439162?text=${encodeURIComponent(msg)}`;
           })()}
@@ -147,13 +151,7 @@ export function ProductInfo({ product }) {
             ))}
           </ul>
         </Accordion>
-        <Accordion title="Size & Fit">
-          <ul className="list-disc pl-5 space-y-1">
-            <li>The model (height 5'8") is wearing a size S</li>
-            <li>Regular fit</li>
-            <li>True to size</li>
-          </ul>
-        </Accordion>
+
         <Accordion title="Material & Care">
           <ul className="list-disc pl-5 space-y-1">
             <li>{product.material}</li>

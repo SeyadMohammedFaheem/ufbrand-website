@@ -3,6 +3,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+const ADMIN_EMAILS = [
+  'admin@ufbrand.com',
+  'faheem@ufbrand.com',
+  'faheemseyadmd@gmail.com' // Added your email for easy testing
+];
+
 // ── AUTH STORE ──────────────────────────────────────────────────────────────
 export const useAuthStore = create(
   persist(
@@ -26,6 +32,11 @@ export const useAuthStore = create(
       },
 
       logout: () => set({ user: null }),
+
+      checkIsAdmin: () => {
+        const user = get().user;
+        return user && ADMIN_EMAILS.includes(user.email.toLowerCase());
+      }
     }),
     { name: 'ufbrand-auth' }
   )

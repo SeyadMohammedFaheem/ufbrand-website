@@ -33,9 +33,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
 
         {/* Logo */}
-        <div className="text-center mb-10">
-          <Link href="/" className="text-3xl font-serif font-black text-[#30323E] tracking-tight">UFBrand</Link>
-          <p className="text-zinc-500 text-sm mt-2 font-light">Welcome back</p>
+        <div className="flex justify-center mb-10">
+          <Link href="/">
+            <img src="/images/logo.png" alt="UF BRAND" className="h-14 w-auto object-contain" />
+          </Link>
         </div>
 
         {/* Card */}

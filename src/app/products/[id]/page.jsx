@@ -22,24 +22,40 @@ export default async function ProductDetail({ params }) {
   }
 
   // Map the sheet data to the format expected by our components
+  const type = sheetProduct.type?.toUpperCase() || 'KURTI'
+  const isFabric = type === 'FABRIC'
+  const isSaree = type === 'SAREE'
+  const isStitched = type === 'KURTI' || type === 'SUIT'
+
   const product = {
     id: sheetProduct.id,
     title: sheetProduct.name,
-    originalPrice: `₹${(sheetProduct.price * 1.5).toFixed(0)}`, // Dummy calculation
+    originalPrice: `₹${(sheetProduct.price * 1.5).toFixed(0)}`,
     currentPrice: `₹${sheetProduct.price}`,
     discount: '33% off',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'ONESIZE'],
-    description: sheetProduct.description || 'Premium quality product tailored for everyday luxury.',
-    features: [
-      'Fabric: Premium Blend',
-      'Care: Dry Clean Only',
-      'Ethically sourced'
-    ],
-    material: '100% Premium Blend',
-    images: [
-      sheetProduct.image || 'https://images.unsplash.com/photo-1610189013589-3286bf5c8ce6?q=80&w=1974&auto=format&fit=crop'
-    ]
+    type,
+
+    // ✅ Sizing Logic
+    sizes: isStitched 
+      ? ['XS', 'S', 'M', 'L', 'XL', 'XXL'] 
+      : isFabric 
+        ? ['2.10 mtrs'] 
+        : [],
+    sizeLabel: isFabric ? 'LENGTH' : 'SELECT SIZE',
+    isFabric,
+    isSaree,
+
+    description: sheetProduct.description || 'Premium quality product.',
+    features: isFabric
+      ? ['Unstitched fabric', 'Length: 2.10 metres', 'Ready to stitch']
+      : isSaree
+        ? ['Traditional drape', 'Includes blouse piece', 'Intricate design']
+        : ['Stitched & ready to wear', 'Premium stitching', 'Machine washable'],
+    images: [sheetProduct.image || '/placeholder.png'],
+    material: sheetProduct.material || 'Premium quality materials'
   };
+
+
 
   return (
     <main className="w-full bg-white min-h-screen">

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Quince Inspired Boutique",
-  description: "A luxury mobile-first e-commerce experience",
+  title: "UF BRAND | Luxury Ethnic Wear Boutique",
+  description: "Exquisite ethnic wear for the modern woman. Shop the latest in suits, kurtas, and luxury fabrics.",
 };
 
 export default function RootLayout({ children }) {

@@ -6,7 +6,7 @@ export const blogs = [
     category: 'Style Guide',
     date: 'April 20, 2025',
     readTime: '5 min read',
-    image: 'https://images.unsplash.com/photo-1610189013589-3286bf5c8ce6?q=80&w=1200&auto=format&fit=crop',
+    image: '/images/blog_styling.png',
     metaDescription: 'Learn how to style salwar kameez for casual days, office wear, weddings and festive occasions. Expert tips on colours, fabrics and accessories from UFBrand.',
     keywords: 'salwar kameez styling, how to wear salwar kameez, Indian ethnic wear styling, women clothing India',
     content: [
@@ -61,7 +61,7 @@ The dupatta also lets you introduce colour, texture, and embroidery into an othe
     category: 'Trends',
     date: 'April 14, 2025',
     readTime: '6 min read',
-    image: 'https://images.unsplash.com/photo-1529139574466-a303027c028c?q=80&w=1200&auto=format&fit=crop',
+    image: '/images/blog_trends.png',
     metaDescription: 'Discover the top kurta trends for Indian women in 2025. From handloom fabrics and oversized silhouettes to festive co-ord sets — stay ahead of Indian fashion.',
     keywords: 'kurta trends 2025, Indian women fashion trends, kurta styles India, ethnic wear trends 2025',
     content: [
@@ -110,7 +110,7 @@ This fusion approach is especially popular among NRI women and those who travel 
     category: 'Shopping Guide',
     date: 'April 8, 2025',
     readTime: '7 min read',
-    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop',
+    image: '/images/blog_fabrics.png',
     metaDescription: 'A complete guide to Indian ethnic wear fabrics for women — silk, cotton, chiffon, georgette, chanderi and more. Learn which fabric suits which occasion and season.',
     keywords: 'Indian ethnic wear fabrics, silk kurta women, cotton salwar kameez, chiffon dupatta, best fabric for Indian wear',
     content: [
@@ -171,7 +171,7 @@ Both fabrics often feature traditional woven borders and patterns that are compl
     category: 'Culture & Fashion',
     date: 'April 1, 2025',
     readTime: '5 min read',
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1200&auto=format&fit=crop',
+    image: '/images/blog_culture.png',
     metaDescription: 'How modern Indian women are redefining ethnic wear — mixing traditional Indian clothing with global fashion trends, sustainability, and a new cultural pride.',
     keywords: 'modern Indian women fashion, ethnic wear trends India, Indian women clothing, contemporary ethnic wear, salwar kameez modern',
     content: [
@@ -214,7 +214,7 @@ For Indian women, this is a moment to celebrate. The garments their grandmothers
     category: 'Occasions',
     date: 'March 25, 2025',
     readTime: '6 min read',
-    image: 'https://images.unsplash.com/photo-1485230895905-ef103d1fb527?q=80&w=1200&auto=format&fit=crop',
+    image: '/images/blog_festive.png',
     metaDescription: 'Best festive outfit ideas for Indian women for Eid, Diwali, weddings and more. Discover the perfect ethnic wear looks for every Indian celebration in 2025.',
     keywords: 'Indian festive outfits women, Eid outfit ideas India, Diwali outfit women, wedding guest Indian wear, ethnic wear for festivals India',
     content: [
