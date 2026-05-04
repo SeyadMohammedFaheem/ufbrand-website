@@ -17,7 +17,13 @@ export default function AdminProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingProduct, setEditingProduct] = useState(null)
+  const [deletingProduct, setDeletingProduct] = useState(null)
   const [isSaving, setIsSaving] = useState(false)
+  
+  // Filter States
+  const [searchQuery, setSearchQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('All Categories')
+  const [statusFilter, setStatusFilter] = useState('All Status')
 
   const fetchProducts = async () => {
     setLoading(true)
@@ -58,6 +64,41 @@ export default function AdminProducts() {
     }
   }
 
+  const handleDelete = async () => {
+    if (!deletingProduct) return
+    setIsSaving(true)
+    try {
+      const res = await fetch(`/api/admin/products/${deletingProduct.id}`, {
+        method: 'DELETE'
+      })
+      if (!res.ok) throw new Error('Delete failed')
+      await fetchProducts()
+      setDeletingProduct(null)
+    } catch (err) {
+      console.error('Error deleting:', err)
+      alert('Failed to delete product.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const resetFilters = () => {
+    setSearchQuery('')
+    setCategoryFilter('All Categories')
+    setStatusFilter('All Status')
+  }
+
+  const isFiltered = searchQuery !== '' || categoryFilter !== 'All Categories' || statusFilter !== 'All Status'
+
+  // Filtering Logic
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          product.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = categoryFilter === 'All Categories' || product.type === categoryFilter;
+    const matchesStatus = statusFilter === 'All Status' || product.status === statusFilter;
+    return matchesSearch && matchesCategory && matchesStatus;
+  })
+
   return (
     <div className="flex flex-col gap-8">
       {/* Header Section */}
@@ -68,7 +109,7 @@ export default function AdminProducts() {
         </div>
         <div className="flex items-center gap-3">
           <a 
-            href="https://docs.google.com/spreadsheets" 
+            href={`https://docs.google.com/spreadsheets/d/${process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID}`} 
             target="_blank" 
             rel="noopener noreferrer"
             className="px-4 py-2 bg-white border border-zinc-200 rounded-xl text-xs font-bold uppercase tracking-widest text-zinc-600 hover:bg-zinc-50 transition-colors flex items-center gap-2"
@@ -83,23 +124,44 @@ export default function AdminProducts() {
 
       {/* Filters & Search */}
       <div className="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="relative w-full md:w-96">
+        <div className="relative w-full md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
           <input 
             type="text" 
             placeholder="Search products..." 
             className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-[#D4147A]"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <button className="flex items-center gap-2 px-4 py-2 border border-zinc-200 rounded-xl text-xs font-bold uppercase tracking-widest text-zinc-600 hover:bg-zinc-50 transition-colors">
-            <Filter size={16} /> Filter
-          </button>
-          <select className="bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-4 text-xs font-bold uppercase tracking-widest text-zinc-600 focus:outline-none focus:border-[#D4147A]">
-            <option>All Categories</option>
-            <option>KURTI</option>
-            <option>SUIT</option>
-            <option>FABRIC</option>
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          {isFiltered && (
+            <button 
+              onClick={resetFilters}
+              className="flex items-center gap-2 px-4 py-2 bg-zinc-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:bg-zinc-200 transition-colors"
+            >
+              <X size={14} /> Reset
+            </button>
+          )}
+          <select 
+            className="bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-4 text-[10px] font-black uppercase tracking-widest text-zinc-600 focus:outline-none focus:border-[#D4147A]"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+          >
+            <option value="All Categories">Category: All</option>
+            <option value="KURTI">KURTI</option>
+            <option value="SUIT">SUIT</option>
+            <option value="FABRIC">FABRIC</option>
+            <option value="SAREE">SAREE</option>
+          </select>
+          <select 
+            className="bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-4 text-[10px] font-black uppercase tracking-widest text-zinc-600 focus:outline-none focus:border-[#D4147A]"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="All Status">Status: All</option>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="INACTIVE">INACTIVE</option>
           </select>
         </div>
       </div>
@@ -128,13 +190,17 @@ export default function AdminProducts() {
                     </div>
                   </td>
                 </tr>
-              ) : products.map((product) => (
+              ) : filteredProducts.map((product) => (
                 <tr key={product.id} className="hover:bg-zinc-50/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-lg bg-zinc-100 overflow-hidden border border-zinc-100">
                         {product.image ? (
-                          <img src={product.image} alt="" className="w-full h-full object-cover" />
+                          <img 
+                            src={`/api/image?url=${encodeURIComponent(product.image)}`} 
+                            alt="" 
+                            className="w-full h-full object-cover" 
+                          />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-zinc-300">
                             <ImageIcon size={20} />
@@ -171,7 +237,10 @@ export default function AdminProducts() {
                       >
                         <Edit size={16} />
                       </button>
-                      <button className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors">
+                      <button 
+                        onClick={() => setDeletingProduct(product)}
+                        className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -180,6 +249,15 @@ export default function AdminProducts() {
               ))}
             </tbody>
           </table>
+          
+          {filteredProducts.length === 0 && !loading && (
+            <div className="px-6 py-20 text-center">
+              <div className="flex flex-col items-center gap-2">
+                <Search className="text-zinc-200" size={40} />
+                <p className="text-sm font-bold uppercase tracking-widest text-zinc-400">No products found matching your search.</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -240,12 +318,13 @@ export default function AdminProducts() {
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Image URL</label>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Image URLs (Comma separated)</label>
                   <input
                     type="text"
                     className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-[#D4147A]"
-                    value={editingProduct.image}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
+                    placeholder="url1, url2, url3"
+                    value={Array.isArray(editingProduct.images) ? editingProduct.images.join(', ') : editingProduct.image}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, images: e.target.value.split(',').map(s => s.trim()) })}
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -304,6 +383,42 @@ export default function AdminProducts() {
               >
                 {isSaving ? 'Saving Changes...' : 'Save Product'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {deletingProduct && (
+        <div className="fixed inset-0 z-[1001] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDeletingProduct(null)} />
+          <div className="relative bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 p-8">
+            <div className="flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center shadow-inner">
+                <Trash2 size={32} />
+              </div>
+              <div>
+                <h3 className="text-xl font-serif font-black text-[#30323E] uppercase tracking-tighter mb-2">Delete Product?</h3>
+                <p className="text-zinc-500 text-sm font-medium">
+                  Are you sure you want to delete <span className="text-zinc-900 font-bold">"{deletingProduct.name}"</span>? 
+                  This action cannot be undone.
+                </p>
+              </div>
+              <div className="flex flex-col w-full gap-3">
+                <button
+                  onClick={handleDelete}
+                  disabled={isSaving}
+                  className="w-full bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50"
+                >
+                  {isSaving ? 'Deleting...' : 'Yes, Delete Product'}
+                </button>
+                <button
+                  onClick={() => setDeletingProduct(null)}
+                  className="w-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 py-4 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>

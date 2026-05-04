@@ -6,6 +6,34 @@ import { getProducts } from '@/lib/sheets';
 
 export const revalidate = 300 // 5 minutes
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const products = await getProducts();
+  const product = products.find((p) => String(p.id) === String(id));
+
+  if (!product) {
+    return {
+      title: 'Product Not Found | UF Brand',
+    };
+  }
+
+  return {
+    title: `${product.name} | UF Brand`,
+    description: product.description || `Shop the latest ${product.name} at UF Brand. Premium handcrafted ethnic wear.`,
+    openGraph: {
+      title: `${product.name} | UF Brand`,
+      description: product.description || `Shop the latest ${product.name} at UF Brand.`,
+      images: [product.image || '/images/hero-brand.png'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.name} | UF Brand`,
+      description: product.description || `Shop the latest ${product.name} at UF Brand.`,
+      images: [product.image || '/images/hero-brand.png'],
+    },
+  };
+}
+
 export default async function ProductDetail({ params }) {
   // Await the params object (required in recent Next.js versions)
   const { id } = await params;
@@ -51,14 +79,41 @@ export default async function ProductDetail({ params }) {
       : isSaree
         ? ['Traditional drape', 'Includes blouse piece', 'Intricate design']
         : ['Stitched & ready to wear', 'Premium stitching', 'Machine washable'],
-    images: [sheetProduct.image || '/placeholder.png'],
-    material: sheetProduct.material || 'Premium quality materials'
+    images: sheetProduct.images?.length > 0 ? sheetProduct.images : [sheetProduct.image || '/placeholder.png'],
+    shortCode: sheetProduct.shortCode,
+    material: sheetProduct.material || 'Premium quality materials',
+    price: sheetProduct.price
+  };
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    image: product.images[0],
+    description: product.description,
+    sku: product.shortCode || product.id,
+    brand: {
+      '@type': 'Brand',
+      name: 'UF Brand',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `https://ufbrand.in/products/${product.id}`,
+      priceCurrency: 'INR',
+      price: product.price,
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: 'https://schema.org/InStock',
+    },
   };
 
 
 
   return (
     <main className="w-full bg-white min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
 
@@ -68,7 +123,7 @@ export default async function ProductDetail({ params }) {
           </div>
 
           {/* Right Column: Sticky Product Info */}
-          <div className="w-full lg:w-[40%] lg:sticky lg:top-32 pb-16">
+          <div className="w-full lg:w-[40%] lg:sticky lg:top-36 pb-16">
             <ProductInfo product={product} />
           </div>
 

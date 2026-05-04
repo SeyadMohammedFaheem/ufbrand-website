@@ -10,7 +10,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Clock,
-  ExternalLink
+  ExternalLink,
+  RefreshCw
 } from 'lucide-react'
 
 const stats = [
@@ -53,6 +54,26 @@ export default function AdminDashboard() {
     { label: 'Avg. Inventory Value', value: loading ? '...' : `₹${Math.round(products.reduce((acc, p) => acc + (p.price || 0), 0) / (products.length || 1))}`, icon: TrendingUp, trend: 'Market', isUp: true, color: 'text-purple-600', bg: 'bg-purple-50' },
   ]
 
+  const [isSyncing, setIsSyncing] = React.useState(false)
+
+  const handleInstagramSync = async () => {
+    setIsSyncing(true)
+    try {
+      const res = await fetch('/api/admin/scrape', { method: 'POST' })
+      const data = await res.json()
+      if (data.success) {
+        alert(data.message)
+      } else {
+        throw new Error(data.error)
+      }
+    } catch (err) {
+      console.error('Sync error:', err)
+      alert('Failed to sync with Instagram.')
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-8">
       {/* Header Section */}
@@ -62,6 +83,14 @@ export default function AdminDashboard() {
           <p className="text-zinc-400 text-sm font-medium tracking-wide">Welcome back! Here's the latest from your inventory.</p>
         </div>
         <div className="flex items-center gap-3">
+          <button 
+            onClick={handleInstagramSync}
+            disabled={isSyncing}
+            className="px-4 py-2 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] rounded-xl text-[10px] font-black uppercase tracking-widest text-white hover:opacity-90 transition-all flex items-center gap-2 shadow-lg disabled:opacity-50"
+          >
+            <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
+            {isSyncing ? 'Syncing...' : 'Sync Instagram'}
+          </button>
           <button className="px-4 py-2 bg-white border border-zinc-200 rounded-xl text-xs font-bold uppercase tracking-widest text-zinc-600 hover:bg-zinc-50 transition-colors">
             Refresh Data
           </button>

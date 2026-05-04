@@ -63,6 +63,7 @@ export default function SignupPage() {
               <label className="block text-[11px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Full Name</label>
               <input
                 type="text"
+                inputMode="text"
                 required
                 autoComplete="name"
                 value={form.name}
@@ -77,6 +78,7 @@ export default function SignupPage() {
               <label className="block text-[11px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Email Address</label>
               <input
                 type="email"
+                inputMode="email"
                 required
                 autoComplete="email"
                 value={form.email}

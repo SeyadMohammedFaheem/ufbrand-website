@@ -3,8 +3,14 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search, ShoppingBag, User, Menu, X, Heart, LogOut } from 'lucide-react'
+import { Search, ShoppingBag, User, Menu, X, Heart, ChevronDown } from 'lucide-react'
 import { useAuthStore, useCartStore } from '@/lib/store'
+
+const ANNOUNCEMENTS = [
+  '✦ Free Shipping on Orders Over ₹2,999',
+  '✦ New Arrivals Every Week — Shop Fresh Collections',
+  '✦ Prepaid Only · Secure & Trusted Since 2016',
+]
 
 export function Navbar() {
   const router = useRouter()
@@ -16,6 +22,7 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isScrolled, setIsScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [announcementIdx, setAnnouncementIdx] = useState(0)
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -28,55 +35,78 @@ export function Navbar() {
 
   useEffect(() => {
     setMounted(true)
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    const timer = setInterval(() => {
+      setAnnouncementIdx(i => (i + 1) % ANNOUNCEMENTS.length)
+    }, 3500)
+    return () => { window.removeEventListener('scroll', handleScroll); clearInterval(timer) }
   }, [])
 
   const navLinks = [
-    { name: 'New Arrivals', href: '/products', badge: 'New', badgeColor: 'bg-blue-100 text-blue-600' },
-    { name: 'Best Sellers', href: '/products', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600' },
+    { name: 'New Arrivals', href: '/products', badge: 'New', badgeColor: 'bg-[#E8F4FD] text-blue-600' },
+    { name: 'Best Sellers', href: '/products', badge: 'Hot 🔥', badgeColor: 'bg-red-50 text-red-600' },
     { name: 'Suits', href: '/products' },
     { name: 'Kurtas', href: '/products' },
     { name: 'Fabric', href: '/products' },
     { name: 'Journal', href: '/blog' },
-    { name: 'Sale', href: '/products', badge: '20% OFF', badgeColor: 'bg-pink-100 text-[#D4147A]' },
+    { name: 'Sale', href: '/products', badge: '20% OFF', badgeColor: 'bg-[#FCECEF] text-[#D4147A]' },
   ]
 
   return (
     <>
-      <header className={`w-full fixed top-0 left-0 z-[100] transition-all duration-300 ${isScrolled ? 'bg-white shadow-md' : 'bg-white border-b border-zinc-100'}`}>
-        {/* Main Nav Container */}
-        <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 h-16 md:h-24 flex items-center justify-between gap-4">
-          
-          {/* 1. Logo Section */}
-          <div className="flex items-center gap-4 flex-shrink-0">
+      {/* ── Announcement Bar ── */}
+      <div className="w-full bg-[#30323E] text-white text-center h-9 flex items-center justify-center overflow-hidden relative z-[101]">
+        <div className="relative h-full flex items-center px-4">
+          <span
+            key={announcementIdx}
+            className="text-[11px] font-semibold tracking-wider"
+            style={{ animation: 'fadeUp 0.4s ease forwards' }}
+          >
+            {ANNOUNCEMENTS[announcementIdx]}
+          </span>
+        </div>
+      </div>
+
+      {/* ── Main Header ── */}
+      <header className={`w-full sticky top-0 z-[100] transition-all duration-300 ${
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-sm shadow-md shadow-black/5'
+          : 'bg-white border-b border-zinc-100'
+      }`}>
+        <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 h-16 md:h-20 flex items-center justify-between gap-4">
+
+          {/* 1. Mobile Menu + Logo */}
+          <div className="flex items-center gap-3 flex-shrink-0">
             <button
-              className="lg:hidden p-1.5 hover:bg-zinc-100 rounded-full transition-colors"
+              className="lg:hidden p-2 hover:bg-zinc-100 rounded-full transition-colors"
               onClick={() => setIsMenuOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
             >
-              <Menu size={24} strokeWidth={1.5} />
+              <Menu size={22} strokeWidth={1.5} />
             </button>
-            <Link href="/" className="flex items-center group">
-              <img 
-                src="/images/logo.png" 
-                alt="UF BRAND" 
-                className="h-18 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            <Link href="/" className="flex items-center group" aria-label="UF Brand — Home">
+              <img
+                src="/images/logo.png"
+                alt="UF BRAND"
+                className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
           </div>
 
-          {/* 2. Centered Navigation (Desktop) */}
-          <nav className="hidden lg:flex items-center justify-center flex-grow gap-8">
+          {/* 2. Centered Desktop Nav */}
+          <nav className="hidden lg:flex items-center justify-center flex-grow gap-6 xl:gap-8" aria-label="Main navigation">
             {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
-                href={link.href} 
-                className="relative group flex items-center gap-2 py-2"
+              <Link
+                key={link.name}
+                href={link.href}
+                className="relative group flex items-center gap-1.5 py-2"
               >
-                <span className="text-[13px] font-bold uppercase tracking-widest text-[#30323E] group-hover:text-[#D4147A] transition-colors">
+                <span className={`text-[12px] font-bold uppercase tracking-widest transition-colors ${
+                  link.name === 'Sale' ? 'text-[#D4147A]' : 'text-[#30323E] group-hover:text-[#D4147A]'
+                }`}>
                   {link.name}
                 </span>
                 {link.badge && (
@@ -84,18 +114,19 @@ export function Navbar() {
                     {link.badge}
                   </span>
                 )}
-                {/* Underline effect */}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#D4147A] transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#D4147A] transition-all duration-300 group-hover:w-full rounded-full" />
               </Link>
             ))}
           </nav>
 
-          {/* 3. Utilities Section */}
-          <div className="flex items-center gap-1 md:gap-4 flex-shrink-0">
+          {/* 3. Actions */}
+          <div className="flex items-center gap-0.5 md:gap-2 flex-shrink-0">
             {/* Search */}
-            <button 
+            <button
+              id="search-toggle"
               onClick={() => setIsSearchOpen(true)}
               className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700"
+              aria-label="Open search"
             >
               <Search size={20} strokeWidth={1.5} />
             </button>
@@ -103,38 +134,49 @@ export function Navbar() {
             {/* User */}
             <div className="hidden md:block">
               {mounted && user ? (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   {checkIsAdmin() && (
-                    <Link 
-                      href="/admin" 
-                      className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#D4147A] transition-colors mr-2 px-3 py-1 border border-zinc-200 rounded-full"
+                    <Link
+                      href="/admin"
+                      className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-[#D4147A] transition-colors px-3 py-1 border border-zinc-200 rounded-full"
                     >
                       Admin
                     </Link>
                   )}
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#30323E]">Hi, {user.name.split(' ')[0]}</span>
-                  <button
-                    onClick={() => { logout(); router.push('/'); }}
-                    className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700 group relative"
-                    title="Sign Out"
-                  >
-                    <User size={20} strokeWidth={1.5} />
-                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-[#30323E] text-white text-[10px] px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Sign Out</span>
-                  </button>
+                  <div className="flex items-center gap-1 cursor-pointer group relative">
+                    <User size={18} strokeWidth={1.5} className="text-zinc-700" />
+                    <span className="text-[11px] font-bold text-[#30323E]">{user.name.split(' ')[0]}</span>
+                    <div className="absolute right-0 top-8 hidden group-hover:block bg-white border border-zinc-100 shadow-xl rounded-xl py-2 min-w-[140px] z-10">
+                      <button
+                        onClick={() => { logout(); router.push('/') }}
+                        className="w-full text-left px-4 py-2 text-[11px] font-bold text-red-500 uppercase tracking-wider hover:bg-red-50 transition-colors"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ) : (
-                <Link href="/login" className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700">
+                <Link
+                  href="/login"
+                  className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700"
+                  aria-label="Sign in"
+                >
                   <User size={20} strokeWidth={1.5} />
                 </Link>
               )}
             </div>
 
             {/* Cart */}
-            <Link href="/cart" className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700 relative group">
+            <Link
+              href="/cart"
+              className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700 relative"
+              aria-label={`Cart, ${cartCount} items`}
+            >
               <ShoppingBag size={20} strokeWidth={1.5} />
               {mounted && cartCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-[#D4147A] text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border border-white group-hover:scale-110 transition-transform">
-                  {cartCount}
+                <span className="absolute top-1 right-1 bg-[#D4147A] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
+                  {cartCount > 9 ? '9+' : cartCount}
                 </span>
               )}
             </Link>
@@ -142,51 +184,62 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Search Overlay */}
+      {/* ── Search Overlay ── */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[200] bg-white animate-in fade-in slide-in-from-top duration-500">
-          <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 h-screen flex flex-col">
-            <div className="flex justify-between items-center h-24">
-              <img src="/images/logo.png" alt="UF BRAND" className="h-14 md:h-18 w-auto object-contain" />
-              <button 
+        <div
+          className="fixed inset-0 z-[200] bg-white/98 backdrop-blur-md"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Search"
+          style={{ animation: 'fadeUp 0.25s ease forwards' }}
+        >
+          <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 h-full flex flex-col">
+            <div className="flex justify-between items-center h-24 border-b border-zinc-100">
+              <img src="/images/logo.png" alt="UF BRAND" className="h-10 w-auto object-contain" />
+              <button
                 type="button"
-                onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); }}
-                className="p-3 hover:bg-zinc-100 rounded-full transition-colors relative z-[210]"
+                onClick={() => setIsSearchOpen(false)}
+                className="p-3 hover:bg-zinc-100 rounded-full transition-colors"
+                aria-label="Close search"
               >
-                <X size={32} strokeWidth={1} />
+                <X size={24} strokeWidth={1.5} />
               </button>
             </div>
-            
-            <div className="flex-grow flex flex-col items-center justify-center -mt-24">
-              <form onSubmit={handleSearch} className="w-full max-w-4xl px-4">
-                <div className="relative group">
+
+            <div className="flex-grow flex flex-col items-center justify-center -mt-16">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-6">Search the Collection</p>
+              <form onSubmit={handleSearch} className="w-full max-w-3xl px-4">
+                <div className="relative group border-b-2 border-zinc-200 focus-within:border-[#D4147A] transition-colors pb-2">
+                  <Search size={24} className="absolute left-0 bottom-4 text-zinc-300" strokeWidth={1.5} />
                   <input
                     autoFocus
                     type="text"
-                    placeholder="WHAT ARE YOU LOOKING FOR?"
-                    className="w-full text-2xl md:text-5xl font-serif border-b-2 border-zinc-200 py-6 focus:outline-none focus:border-[#D4147A] transition-colors placeholder:text-zinc-300 uppercase tracking-tight"
+                    id="search-input"
+                    placeholder="Kurtas, Silks, Festive..."
+                    className="w-full pl-10 text-2xl md:text-4xl font-light text-zinc-800 focus:outline-none placeholder:text-zinc-200 bg-transparent"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
-                  <button 
+                  <button
                     type="submit"
-                    className="absolute right-0 bottom-6 text-zinc-400 group-focus-within:text-[#D4147A] transition-colors"
+                    className="absolute right-0 bottom-3 text-zinc-400 hover:text-[#D4147A] transition-colors"
+                    aria-label="Submit search"
                   >
-                    <Search size={32} strokeWidth={1.5} />
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </button>
                 </div>
-                <div className="mt-8 flex flex-wrap gap-4 items-center">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Popular:</span>
-                  {['Kurtas', 'Silk Sarees', 'New Arrivals', 'Festive Edit'].map((term) => (
+
+                <div className="mt-8 flex flex-wrap gap-3 items-center">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">Trending:</span>
+                  {['Kurta Sets', 'Silk Sarees', 'Festive Edit', 'Co-ord Sets', 'Cotton Suits'].map((term) => (
                     <button
                       key={term}
                       type="button"
                       onClick={() => {
-                        setSearchQuery(term);
-                        router.push(`/products?search=${encodeURIComponent(term)}`);
-                        setIsSearchOpen(false);
+                        router.push(`/products?search=${encodeURIComponent(term)}`)
+                        setIsSearchOpen(false)
                       }}
-                      className="text-[11px] font-bold uppercase tracking-widest text-zinc-600 hover:text-[#D4147A] transition-colors underline decoration-zinc-200 underline-offset-4"
+                      className="text-[11px] font-semibold text-zinc-500 hover:text-[#D4147A] transition-colors border border-zinc-200 hover:border-[#D4147A] px-3 py-1.5 rounded-full"
                     >
                       {term}
                     </button>
@@ -198,62 +251,94 @@ export function Navbar() {
         </div>
       )}
 
-      {/* Header Spacer */}
-      <div className="h-16 md:h-24 w-full" />
 
-      {/* Mobile Menu Drawer */}
+
+      {/* ── Mobile Menu Drawer ── */}
       {isMenuOpen && (
         <>
-          <div className="fixed inset-0 bg-black/50 z-[110] backdrop-blur-sm" onClick={() => setIsMenuOpen(false)} />
-          <div className="fixed inset-y-0 left-0 w-full max-w-[320px] bg-white z-[120] shadow-2xl animate-in slide-in-from-left duration-300">
+          <div
+            className="fixed inset-0 bg-black/50 z-[110] backdrop-blur-sm"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <nav
+            id="mobile-menu"
+            className="fixed inset-y-0 left-0 w-full max-w-[300px] bg-white z-[120] shadow-2xl"
+            style={{ animation: 'fadeUp 0.25s ease forwards' }}
+            aria-label="Mobile navigation"
+          >
             <div className="flex flex-col h-full">
-              <div className="flex justify-between items-center p-6 border-b border-zinc-100">
-                <img src="/images/logo.png" alt="UF BRAND" className="h-10 w-auto object-contain" />
-                <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-zinc-100 rounded-full transition-colors">
-                  <X size={24} />
+              <div className="flex justify-between items-center p-5 border-b border-zinc-100">
+                <img src="/images/logo.png" alt="UF BRAND" className="h-9 w-auto object-contain" />
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-2 hover:bg-zinc-100 rounded-full transition-colors"
+                  aria-label="Close menu"
+                >
+                  <X size={20} />
                 </button>
               </div>
-              <div className="flex-grow overflow-y-auto py-6">
-                <nav className="flex flex-col">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.name}
-                      href={link.href}
-                      className="px-6 py-4 flex items-center justify-between group border-b border-zinc-50"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <span className="text-sm font-bold uppercase tracking-widest text-[#30323E] group-hover:text-[#D4147A] transition-colors">
-                        {link.name}
+
+              <div className="flex-grow overflow-y-auto">
+                <div className="px-5 py-3 bg-[#FAF9F6] border-b border-zinc-100">
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400">Collections</p>
+                </div>
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="px-5 py-3.5 flex items-center justify-between group border-b border-zinc-50"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span className={`text-sm font-semibold tracking-wide transition-colors ${
+                      link.name === 'Sale' ? 'text-[#D4147A]' : 'text-[#30323E] group-hover:text-[#D4147A]'
+                    }`}>
+                      {link.name}
+                    </span>
+                    {link.badge && (
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase ${link.badgeColor}`}>
+                        {link.badge}
                       </span>
-                      {link.badge && (
-                        <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter ${link.badgeColor}`}>
-                          {link.badge}
-                        </span>
-                      )}
-                    </Link>
-                  ))}
-                </nav>
+                    )}
+                  </Link>
+                ))}
               </div>
-              <div className="p-6 border-t border-zinc-100 bg-zinc-50">
-                <div className="flex flex-col gap-4">
-                  {user ? (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-zinc-900 uppercase tracking-wider">Hi, {user.name.split(' ')[0]}</span>
-                      <button onClick={logout} className="text-xs font-bold text-red-500 uppercase tracking-widest">Sign Out</button>
+
+              <div className="p-5 border-t border-zinc-100">
+                {user ? (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-[#FCE4EC] flex items-center justify-center">
+                        <span className="text-xs font-black text-[#D4147A]">{user.name[0]}</span>
+                      </div>
+                      <span className="text-sm font-bold text-zinc-900">{user.name.split(' ')[0]}</span>
                     </div>
-                  ) : (
-                    <Link href="/login" className="flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-zinc-800" onClick={() => setIsMenuOpen(false)}>
-                      <User size={20} /> Sign In
-                    </Link>
-                  )}
+                    <button
+                      onClick={() => { logout(); setIsMenuOpen(false) }}
+                      className="text-[11px] font-bold text-red-500 uppercase tracking-widest"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-3 text-sm font-bold text-zinc-800"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User size={18} /> Sign In / Register
+                  </Link>
+                )}
+                <div className="mt-4 pt-4 border-t border-zinc-100 flex flex-col gap-1">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">Policies</p>
+                  <a href="#" className="text-[11px] text-zinc-500 font-medium">Shipping & Delivery</a>
+                  <a href="#" className="text-[11px] text-zinc-500 font-medium">Return Policy</a>
+                  <a href="#" className="text-[11px] text-zinc-500 font-medium">Contact Us</a>
                 </div>
               </div>
             </div>
-          </div>
+          </nav>
         </>
       )}
     </>
   )
 }
-
-
