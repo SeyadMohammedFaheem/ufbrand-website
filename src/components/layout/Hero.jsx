@@ -13,11 +13,10 @@ const TRUST_ITEMS = [
 ];
 
 const HERO_CATEGORIES = [
-  { label: 'New Arrivals', href: '/products', accent: true },
-  { label: 'Kurta Sets', href: '/products' },
-  { label: 'Silk Sarees', href: '/products' },
-  { label: 'Festive Edit', href: '/products' },
-  { label: 'Co-ords', href: '/products' },
+  { label: 'Suits', href: '/products?search=suits', accent: true },
+  { label: 'Kurtis', href: '/products?search=kurtis' },
+  { label: 'Sarees', href: '/products?search=sarees' },
+  { label: 'Journal', href: '/blog' },
 ];
 
 export function Hero() {
@@ -118,13 +117,11 @@ export function Hero() {
 
         <div className="py-4 md:py-5">
           <div className="animate-marquee gap-6 px-3">
-            {[...Array(2)].map((_, arrayIndex) => (
+            {[...Array(6)].map((_, arrayIndex) => (
               <React.Fragment key={arrayIndex}>
                 {[
-                  { icon: <Truck size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Pan-India Shipping', sub: 'Delivered to your doorstep' },
                   { icon: <ShieldCheck size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Secure Payment', sub: 'UPI, Cards & Net Banking' },
-                  { icon: <Star size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Gift Packaging', sub: 'Available on request' },
-                  { icon: <Feather size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Customer Support', sub: 'WhatsApp: 9899990772' },
+                  { icon: <Feather size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Customer Support', sub: 'WhatsApp: 8122404928' },
                   { icon: <RefreshCcw size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Premium Quality', sub: 'Handcrafted with love' },
                 ].map((item, i) => (
                   <div

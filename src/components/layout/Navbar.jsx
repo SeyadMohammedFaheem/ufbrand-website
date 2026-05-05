@@ -44,13 +44,10 @@ export function Navbar() {
   }, [])
 
   const navLinks = [
-    { name: 'New Arrivals', href: '/products', badge: 'New', badgeColor: 'bg-[#E8F4FD] text-blue-600' },
-    { name: 'Best Sellers', href: '/products', badge: 'Hot 🔥', badgeColor: 'bg-red-50 text-red-600' },
-    { name: 'Suits', href: '/products' },
-    { name: 'Kurtas', href: '/products' },
-    { name: 'Fabric', href: '/products' },
+    { name: 'Suits', href: '/products?search=suits' },
+    { name: 'Kurtis', href: '/products?search=kurtis' },
+    { name: 'Sarees', href: '/products?search=sarees' },
     { name: 'Journal', href: '/blog' },
-    { name: 'Sale', href: '/products', badge: '20% OFF', badgeColor: 'bg-[#FCECEF] text-[#D4147A]' },
   ]
 
   return (
@@ -97,35 +94,41 @@ export function Navbar() {
           </div>
 
           {/* 2. Centered Desktop Nav */}
-          <nav className="hidden lg:flex items-center justify-center flex-grow gap-6 xl:gap-8" aria-label="Main navigation">
+          <nav className="hidden lg:flex items-center justify-center flex-grow gap-8" aria-label="Main navigation">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 className="relative group flex items-center gap-1.5 py-2"
               >
-                <span className={`text-[12px] font-bold uppercase tracking-widest transition-colors ${
-                  link.name === 'Sale' ? 'text-[#D4147A]' : 'text-[#30323E] group-hover:text-[#D4147A]'
-                }`}>
+                <span className="text-[12px] font-bold uppercase tracking-widest text-[#30323E] group-hover:text-[#D4147A] transition-colors">
                   {link.name}
                 </span>
-                {link.badge && (
-                  <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-tighter ${link.badgeColor}`}>
-                    {link.badge}
-                  </span>
-                )}
                 <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#D4147A] transition-all duration-300 group-hover:w-full rounded-full" />
               </Link>
             ))}
           </nav>
 
           {/* 3. Actions */}
-          <div className="flex items-center gap-0.5 md:gap-2 flex-shrink-0">
-            {/* Search */}
+          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+            {/* Desktop Search Bar */}
+            <form onSubmit={handleSearch} className="hidden lg:flex relative w-64 xl:w-80">
+              <input
+                type="text"
+                placeholder="Search products.."
+                className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2 text-[13px] font-medium text-zinc-700 placeholder:text-zinc-400 focus:outline-none focus:border-[#D4147A] transition-all pr-10 shadow-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-[#30323E]">
+                <Search size={16} strokeWidth={2} />
+              </button>
+            </form>
+
+            {/* Mobile Search Toggle */}
             <button
-              id="search-toggle"
               onClick={() => setIsSearchOpen(true)}
-              className="p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700"
+              className="lg:hidden p-2.5 hover:bg-zinc-100 rounded-full transition-colors text-zinc-700"
               aria-label="Open search"
             >
               <Search size={20} strokeWidth={1.5} />
@@ -215,7 +218,7 @@ export function Navbar() {
                     autoFocus
                     type="text"
                     id="search-input"
-                    placeholder="Kurtas, Silks, Festive..."
+                    placeholder="Kurtis, Silks, Festive..."
                     className="w-full pl-10 text-2xl md:text-4xl font-light text-zinc-800 focus:outline-none placeholder:text-zinc-200 bg-transparent"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

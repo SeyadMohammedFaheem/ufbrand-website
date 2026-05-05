@@ -24,7 +24,7 @@ export default function CartPage() {
     if (items.length === 0) return;
     const lines = items.map(i => `• ${i.title} (${i.size || 'Standard'}) ×${i.quantity} — ${i.currentPrice}`).join('\n');
     const msg = `Hello! I'd like to place an order:\n\n${lines}\n\nTotal: ₹${total.toLocaleString('en-IN')}\n\nName: ${user?.name || 'Guest'}\n\nPlease share payment details. Thank you!`;
-    window.open(`https://wa.me/916379439162?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/918122404928?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   if (items.length === 0) {

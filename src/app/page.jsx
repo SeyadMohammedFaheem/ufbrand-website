@@ -18,7 +18,7 @@ export default function Home() {
         logo: 'https://ufbrand.in/images/logo.png',
         contactPoint: {
           '@type': 'ContactPoint',
-          telephone: '+91-9899990772',
+          telephone: '+91-8122404928',
           contactType: 'customer service',
         },
       },
