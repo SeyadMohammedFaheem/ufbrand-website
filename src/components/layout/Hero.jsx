@@ -1,137 +1,96 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Truck, RefreshCcw, Feather, ArrowRight, Star } from 'lucide-react';
-
-const TRUST_ITEMS = [
-  { icon: <ShieldCheck size={15} strokeWidth={2} className="text-[#D4147A]" />, text: '9 Years of Trust' },
-  { icon: <Truck size={15} strokeWidth={2} className="text-[#D4147A]" />, text: 'Pan-India Shipping' },
-  { icon: <Star size={15} strokeWidth={2} fill="currentColor" className="text-[#D4147A]" />, text: '52,000+ Happy Customers' },
-  { icon: <Feather size={15} strokeWidth={2} className="text-[#D4147A]" />, text: 'Premium Handcrafted Fabrics' },
-  { icon: <RefreshCcw size={15} strokeWidth={2} className="text-[#D4147A]" />, text: 'Prepaid Only · Secure Payment' },
-];
-
-const HERO_CATEGORIES = [
-  { label: 'Suits', href: '/products?search=suits', accent: true },
-  { label: 'Kurtis', href: '/products?search=kurtis' },
-  { label: 'Sarees', href: '/products?search=sarees' },
-  { label: 'Journal', href: '/blog' },
-];
 
 export function Hero() {
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 80);
-    return () => clearTimeout(t);
-  }, []);
-
-  const animate = (delay) => ({
-    opacity: loaded ? 1 : 0,
-    transform: loaded ? 'translateY(0)' : 'translateY(28px)',
-    transition: `opacity 0.8s ease ${delay}s, transform 0.8s ease ${delay}s`,
-  });
-
   return (
-    <section className="w-full bg-white relative flex flex-col h-[calc(100vh-100px)] md:h-[calc(100vh-120px)] min-h-[540px] md:min-h-[600px] overflow-hidden">
-      {/* ── STANDARD E-COMMERCE BANNER ── */}
-      <div className="relative w-full flex-1 flex items-center min-h-0">
-        
-        {/* Full-bleed background */}
-        <div className="absolute inset-0 bg-zinc-900 overflow-hidden">
+    <section className="w-full bg-white relative flex flex-col h-[calc(100vh-100px)] md:h-[calc(100vh-120px)] min-h-[600px] md:min-h-[750px] overflow-hidden">
+      
+      {/* ── CINEMATIC BACKGROUND ── */}
+      <div className="absolute inset-0 bg-zinc-900">
+        <div className="relative w-full h-full overflow-hidden">
           <img
              src="/images/hero-brand.png"
              alt="UF Brand luxury ethnic fashion"
-             className="w-full h-full object-cover object-[70%_20%] md:object-[60%_30%] scale-105"
+             className="w-full h-full object-cover object-[80%_20%] md:object-[60%_30%] scale-110 animate-ken-burns"
              fetchPriority="high"
           />
-          {/* Linear gradient to protect left-aligned text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-        </div>
-
-        {/* Content Container - Aligned Left */}
-        <div className="relative z-10 w-full max-w-7xl px-6 md:px-12 lg:px-20">
-           <div className="max-w-xl">
-              
-              <div className="flex items-center gap-3 mb-4 md:mb-6" style={animate(0.1)}>
-                 <span className="px-3 py-1.5 bg-[#D4147A] text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-sm">New In</span>
-                 <span className="text-white/90 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Festive 2025</span>
-              </div>
-
-              <h1 
-                className="text-4xl md:text-6xl lg:text-[72px] font-serif font-black text-white leading-[1.1] tracking-tight mb-4 md:mb-6"
-                style={animate(0.2)}
-              >
-                Elevate Your <br className="hidden md:block" />Ethnic Style.
-              </h1>
-
-              <p 
-                className="text-white/80 text-sm md:text-lg font-medium leading-relaxed mb-6 md:mb-8 max-w-xs md:max-w-md"
-                style={animate(0.3)}
-              >
-                Discover our latest collection of premium hand-woven silks and festive ensembles.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3 md:gap-4" style={animate(0.4)}>
-                <Link
-                  href="/products"
-                  className="inline-flex items-center justify-center bg-white text-[#30323E] px-6 md:px-8 py-3.5 md:py-4.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] transition-all hover:bg-[#D4147A] hover:text-white"
-                >
-                  Shop Collection
-                </Link>
-                <Link
-                  href="/products?search=sarees"
-                  className="inline-flex items-center justify-center bg-transparent text-white border border-white/30 px-6 md:px-8 py-3.5 md:py-4.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] transition-all hover:bg-white/10"
-                >
-                  View Sarees
-                </Link>
-              </div>
-
-           </div>
+          {/* Layered Overlays for Depth */}
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent md:bg-gradient-to-r md:from-black/80 md:via-black/30 md:to-transparent" />
         </div>
       </div>
 
-
-
-      {/* ── TRUST PILLARS SCROLLER ── */}
-      <div className="w-full bg-white border-b border-zinc-100 overflow-hidden relative group">
-        <style dangerouslySetInnerHTML={{ __html: `
-          @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-          .animate-marquee {
-            animation: marquee 30s linear infinite;
-            display: flex;
-            width: max-content;
-          }
-          .group:hover .animate-marquee {
-            animation-play-state: paused;
-          }
-        ` }} />
+      {/* ── MAIN CONTENT ── */}
+      <div className="relative z-10 flex-1 flex items-end md:items-center px-6 md:px-12 lg:px-24 pb-20 md:pb-0">
+        <div className="max-w-4xl w-full">
+          
+          {/* Tagline Section */}
         
-        {/* Subtle gradient fades on edges for a premium look */}
-        <div className="absolute left-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-        <div className="py-4 md:py-5">
-          <div className="animate-marquee gap-6 px-3">
+          {/* Headline with Layered Typography */}
+          <div className="relative mb-8 md:mb-12">
+            <h1 className="text-5xl md:text-8xl lg:text-[110px] font-serif italic text-white leading-[0.9] tracking-tighter animate-fadeUp [animation-delay:400ms] opacity-0">
+              Timeless <br /> 
+              <span className="text-[#D4147A] not-italic font-black tracking-tight">Elegance.</span>
+            </h1>
+            <p className="mt-6 md:mt-8 max-w-md text-white/70 text-sm md:text-lg font-medium leading-relaxed animate-fadeUp [animation-delay:600ms] opacity-0">
+              Discover the artistry of hand-woven silks and festive silhouettes, 
+              designed for the modern woman who cherishes her roots.
+            </p>
+          </div>
+
+          {/* Action Group */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 animate-fadeUp [animation-delay:800ms] opacity-0">
+            <Link
+              href="/products"
+              className="group relative overflow-hidden bg-white text-[#30323E] px-10 py-5 text-[11px] font-black uppercase tracking-[0.2em] transition-all"
+            >
+              <div className="absolute inset-0 w-0 bg-[#D4147A] transition-all group-hover:w-full" />
+              <span className="relative z-10 transition-colors group-hover:text-white">Shop Collection</span>
+            </Link>
+            
+            <Link
+              href="/products?search=kurtis"
+              className="text-white/80 hover:text-white text-[11px] font-black uppercase tracking-[0.2em] py-5 px-4 flex items-center gap-3 group transition-colors"
+            >
+              Explore Kurtis
+              <span className="w-8 h-[1px] bg-white/30 transition-all group-hover:w-12 group-hover:bg-[#D4147A]" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Vertical Scroll Indicator (Desktop Only) */}
+        <div className="hidden lg:flex absolute right-12 bottom-12 flex-col items-center gap-6">
+          <span className="text-white/30 text-[9px] font-black uppercase tracking-[0.4em] rotate-90 origin-right whitespace-nowrap mb-8">
+            Scroll to Discover
+          </span>
+          <div className="w-[1px] h-20 bg-gradient-to-b from-white/40 to-transparent relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1/2 bg-[#D4147A] animate-scrollLine" />
+          </div>
+        </div>
+      </div>
+
+      {/* ── REFINED TRUST RIBBON ── */}
+      <div className="w-full bg-white border-y border-zinc-100 overflow-hidden relative">
+        <div className="py-4 md:py-6">
+          <div className="animate-marquee gap-12 px-6">
             {[...Array(6)].map((_, arrayIndex) => (
               <React.Fragment key={arrayIndex}>
                 {[
-                  { icon: <ShieldCheck size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Secure Payment', sub: 'UPI, Cards & Net Banking' },
-                  { icon: <Feather size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Customer Support', sub: 'WhatsApp: 8122404928' },
-                  { icon: <RefreshCcw size={20} className="text-[#D4147A]" strokeWidth={1.5} />, title: 'Premium Quality', sub: 'Handcrafted with love' },
+                  { label: 'Secure Payment', sub: 'UPI, Cards & Net Banking' },
+                  { label: 'WhatsApp Support', sub: '+91 8122404928' },
+                  { label: 'Premium Quality', sub: 'Handcrafted with Love' },
                 ].map((item, i) => (
                   <div
                     key={`${arrayIndex}-${i}`}
-                    className="trust-badge flex items-center gap-4 px-5 py-3.5 rounded-xl bg-[#FAF9F6] border border-zinc-100 min-w-[280px] md:min-w-[300px] cursor-default transition-colors hover:bg-zinc-100"
+                    className="flex items-center gap-6 min-w-[300px] group cursor-default"
                   >
-                    <span className="flex-shrink-0">{item.icon}</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#D4147A] opacity-30 group-hover:opacity-100 transition-opacity" />
                     <div>
-                      <p className="text-[11px] font-black text-[#30323E] uppercase tracking-wider">{item.title}</p>
-                      <p className="text-[10px] text-zinc-500 font-medium mt-0.5">{item.sub}</p>
+                      <p className="text-[10px] font-black text-[#30323E] uppercase tracking-[0.2em]">{item.label}</p>
+                      <p className="text-[9px] text-zinc-400 font-bold tracking-wider mt-0.5">{item.sub}</p>
                     </div>
                   </div>
                 ))}
@@ -140,6 +99,25 @@ export function Hero() {
           </div>
         </div>
       </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes ken-burns {
+          0% { transform: scale(1.1) translate(0, 0); }
+          100% { transform: scale(1) translate(-2%, -1%); }
+        }
+        .animate-ken-burns {
+          animation: ken-burns 20s ease-in-out infinite alternate;
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+          display: flex;
+          width: max-content;
+        }
+      `}} />
     </section>
   );
 }

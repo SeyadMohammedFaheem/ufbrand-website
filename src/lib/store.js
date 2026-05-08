@@ -2,45 +2,81 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { auth } from './firebase';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  updateProfile
+} from 'firebase/auth';
 
 const ADMIN_EMAILS = [
   'admin@ufbrand.com',
   'faheem@ufbrand.com',
-  'faheemseyadmd@gmail.com' // Added your email for easy testing
+  'faheemseyadmd@gmail.com'
 ];
 
 // ── AUTH STORE ──────────────────────────────────────────────────────────────
-export const useAuthStore = create(
-  persist(
-    (set, get) => ({
-      user: null, // { name, email }
-      users: [],  // registered users: [{ name, email, password }]
+export const useAuthStore = create((set, get) => ({
+  user: null,
+  loading: true,
 
-      register: (name, email, password) => {
-        const existing = get().users.find(u => u.email === email);
-        if (existing) return { success: false, error: 'Email already registered.' };
-        const newUser = { name, email, password };
-        set(s => ({ users: [...s.users, newUser], user: { name, email } }));
-        return { success: true };
-      },
-
-      login: (email, password) => {
-        const found = get().users.find(u => u.email === email && u.password === password);
-        if (!found) return { success: false, error: 'Invalid email or password.' };
-        set({ user: { name: found.name, email: found.email } });
-        return { success: true };
-      },
-
-      logout: () => set({ user: null }),
-
-      checkIsAdmin: () => {
-        const user = get().user;
-        return user && ADMIN_EMAILS.includes(user.email.toLowerCase());
+  // Initialize: listen for auth changes
+  init: () => {
+    onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        set({ 
+          user: { 
+            name: firebaseUser.displayName, 
+            email: firebaseUser.email,
+            uid: firebaseUser.uid 
+          }, 
+          loading: false 
+        });
+      } else {
+        set({ user: null, loading: false });
       }
-    }),
-    { name: 'ufbrand-auth' }
-  )
-);
+    });
+  },
+
+  register: async (name, email, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+      set({ user: { name, email, uid: userCredential.user.uid } });
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  login: async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      set({ 
+        user: { 
+          name: userCredential.user.displayName, 
+          email: userCredential.user.email,
+          uid: userCredential.user.uid 
+        } 
+      });
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'Invalid email or password.' };
+    }
+  },
+
+  logout: async () => {
+    await signOut(auth);
+    set({ user: null });
+  },
+
+  checkIsAdmin: () => {
+    const user = get().user;
+    return user && ADMIN_EMAILS.includes(user.email.toLowerCase());
+  }
+}));
 
 // ── CART STORE ──────────────────────────────────────────────────────────────
 export const useCartStore = create(

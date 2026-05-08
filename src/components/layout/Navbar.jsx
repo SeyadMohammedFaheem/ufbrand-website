@@ -14,7 +14,7 @@ const ANNOUNCEMENTS = [
 
 export function Navbar() {
   const router = useRouter()
-  const { user, logout, checkIsAdmin } = useAuthStore()
+  const { user, logout, checkIsAdmin, init } = useAuthStore()
   const { items } = useCartStore()
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -34,6 +34,7 @@ export function Navbar() {
   }
 
   useEffect(() => {
+    init()
     setMounted(true)
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
