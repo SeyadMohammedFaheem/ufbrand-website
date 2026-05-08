@@ -24,6 +24,11 @@ export const useAuthStore = create((set, get) => ({
 
   // Initialize: listen for auth changes
   init: () => {
+    // Clean up old local storage auth data for security
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('ufbrand-auth');
+    }
+    
     onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         set({ 
