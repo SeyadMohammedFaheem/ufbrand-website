@@ -149,7 +149,7 @@ export function Navbar() {
                   )}
                   <div className="flex items-center gap-1 cursor-pointer group relative">
                     <User size={18} strokeWidth={1.5} className="text-zinc-700" />
-                    <span className="text-[11px] font-bold text-[#30323E]">{user.name.split(' ')[0]}</span>
+                    <span className="text-[11px] font-bold text-[#30323E]">{user?.name ? user.name.split(' ')[0] : 'Account'}</span>
                     <div className="absolute right-0 top-8 hidden group-hover:block bg-white border border-zinc-100 shadow-xl rounded-xl py-2 min-w-[140px] z-10">
                       <button
                         onClick={() => { logout(); router.push('/') }}
@@ -334,9 +334,9 @@ export function Navbar() {
                 )}
                 <div className="mt-4 pt-4 border-t border-zinc-100 flex flex-col gap-1">
                   <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">Policies</p>
-                  <a href="#" className="text-[11px] text-zinc-500 font-medium">Shipping & Delivery</a>
-                  <a href="#" className="text-[11px] text-zinc-500 font-medium">Return Policy</a>
-                  <a href="#" className="text-[11px] text-zinc-500 font-medium">Contact Us</a>
+                  <Link href="/shipping" className="text-[11px] text-zinc-500 font-medium" onClick={() => setIsMenuOpen(false)}>Shipping & Delivery</Link>
+                  <Link href="/returns" className="text-[11px] text-zinc-500 font-medium" onClick={() => setIsMenuOpen(false)}>Return Policy</Link>
+                  <Link href="/contact" className="text-[11px] text-zinc-500 font-medium" onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
                 </div>
               </div>
             </div>
