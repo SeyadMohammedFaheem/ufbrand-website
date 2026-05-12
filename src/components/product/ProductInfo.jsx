@@ -274,9 +274,9 @@ export function ProductInfo({ product }) {
                 src={`https://www.instagram.com/p/${product.shortCode}/embed`}
                 width="100%"
                 height="420"
-                frameBorder="0"
+                frameBorder={0}
                 scrolling="no"
-                allowTransparency="true"
+                allowTransparency={true}
                 className="w-full"
                 title="Instagram post"
               />
@@ -295,8 +295,9 @@ export function ProductInfo({ product }) {
 
       {/* Sticky Bottom CTA for Mobile */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-zinc-100 p-3 shadow-[0_-12px_24px_rgba(0,0,0,0.08)] flex gap-2 transition-transform duration-300 md:hidden ${showSticky ? 'translate-y-0' : 'translate-y-[150%]'
-          }`}
+        className={`fixed bottom-0 left-0 right-0 z-[60] bg-white border-t border-zinc-100 p-3 shadow-[0_-12px_24px_rgba(0,0,0,0.08)] flex gap-2 transition-transform duration-300 md:hidden ${
+          showSticky ? 'translate-y-0' : 'translate-y-[150%]'
+        }`}
       >
         <button
           onClick={handleAddToCart}

@@ -7,12 +7,26 @@ export async function GET(req: Request) {
 
     if (!url) return NextResponse.json({ error: 'No URL' }, { status: 400 })
 
-    // If it's already a relative path to a local image, just redirect or serve it directly
-    if (url.startsWith('/')) {
-      return NextResponse.redirect(new URL(url, req.url))
+    let targetUrl = url
+
+    // Handle Google Drive links
+    if (url.includes('drive.google.com')) {
+      const driveIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/)
+      if (driveIdMatch && driveIdMatch[1]) {
+        targetUrl = `https://lh3.googleusercontent.com/d/${driveIdMatch[1]}`
+      }
     }
 
-    const response = await fetch(url)
+    // If it's already a relative path to a local image
+    if (targetUrl.startsWith('/')) {
+      return NextResponse.redirect(new URL(targetUrl, req.url))
+    }
+
+    const response = await fetch(targetUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      }
+    })
     if (!response.ok) {
       console.error(`Failed to fetch image: ${url} - Status: ${response.status}`)
       return NextResponse.json({ error: 'Failed to fetch' }, { status: response.status })
