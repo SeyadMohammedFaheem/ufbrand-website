@@ -43,11 +43,8 @@ export function RecentEditorial() {
                 <img
                   src={article.image}
                   alt={article.title}
-                  width={400}
-                  height={500}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[10s] ease-out"
                   loading="lazy"
-                  decoding="async"
                 />
                 {/* Subtle overlay on hover */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500" />

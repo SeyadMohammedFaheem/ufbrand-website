@@ -43,13 +43,9 @@ export function PromoBanner() {
 
         {/* ── Main Banner ── */}
         <div className="w-full h-[360px] md:h-[480px] relative overflow-hidden rounded-2xl mb-3 group">
-          <img
-            src="/images/promo-banner-bg.png"
-            alt="The Collection"
-            width={1440}
-            height={480}
-            className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[20s] ease-out"
-            decoding="async"
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-100 group-hover:scale-105 transition-transform duration-[20s] ease-out"
+            style={{ backgroundImage: `url('/images/promo-banner-bg.png')` }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
 
@@ -105,11 +101,8 @@ export function PromoBanner() {
               <img
                 src={cat.image}
                 alt={cat.title}
-                width={400}
-                height={533}
                 className="w-full h-full object-cover img-zoom"
                 loading="lazy"
-                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 

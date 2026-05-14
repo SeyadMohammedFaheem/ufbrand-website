@@ -1,20 +1,6 @@
 import "./globals.css";
-import { Inter, Playfair_Display } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-  style: ["normal", "italic"],
-});
 
 export const metadata = {
   title: {
@@ -58,7 +44,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`scroll-smooth ${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className="antialiased font-sans">
         <Navbar />
         {children}
@@ -67,4 +53,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-

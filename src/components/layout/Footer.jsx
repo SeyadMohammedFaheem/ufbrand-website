@@ -34,7 +34,7 @@ export function Footer() {
           {/* Brand Column */}
           <div className="md:col-span-1">
             <Link href="/" aria-label="UF Brand Home">
-              <img src="/images/logo.png" alt="UF BRAND" width={160} height={48} className="h-12 w-auto object-contain mb-4" decoding="async" />
+              <img src="/images/logo.png" alt="UF BRAND" className="h-12 w-auto object-contain mb-4" />
             </Link>
             <p className="text-[13px] text-zinc-500 font-light leading-relaxed mb-5 max-w-xs">
               Premium women's ethnic wear. 9 years of excellence in delivering timeless elegance across India.
