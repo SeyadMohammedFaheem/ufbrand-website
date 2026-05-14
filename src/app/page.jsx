@@ -4,7 +4,8 @@ import { PromoBanner } from '@/components/sections/PromoBanner';
 import { CustomerReviews } from '@/components/sections/CustomerReviews';
 import { RecentEditorial } from '@/components/sections/RecentEditorial';
 
-export const revalidate = 0; // Force Next.js to always fetch fresh data
+export const revalidate = 300; // ISR: rebuild page every 5 min, serve cached until then
+
 
 export default function Home() {
   const jsonLd = {

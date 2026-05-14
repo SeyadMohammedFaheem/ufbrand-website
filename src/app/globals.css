@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap');
-
+/* Google Fonts are loaded non-blocking via next/font in layout.jsx */
 @import "tailwindcss";
 
 :root {
@@ -14,17 +13,18 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 .font-serif {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair), 'Playfair Display', serif;
 }
 
 .font-sans {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), 'Inter', sans-serif;
 }
+
 
 /* Hide scrollbar for category row but allow scrolling */
 .no-scrollbar::-webkit-scrollbar {
@@ -61,6 +61,11 @@ body {
     100% { transform: translateY(200%); opacity: 0; }
   }
 
+  @keyframes ken-burns {
+    0% { transform: scale(1.1) translate(0, 0); }
+    100% { transform: scale(1) translate(-2%, -1%); }
+  }
+
   @keyframes pulse-ring {
     0% { transform: scale(0.8); opacity: 1; }
     100% { transform: scale(1.4); opacity: 0; }
@@ -78,6 +83,19 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
 }
+
+/* Ken-Burns hero zoom */
+.animate-ken-burns {
+  animation: ken-burns 20s ease-in-out infinite alternate;
+}
+
+/* Marquee trust ribbon */
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+  display: flex;
+  width: max-content;
+}
+
 
 /* Product card quick-add hover reveal */
 .product-card-atc {

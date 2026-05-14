@@ -89,7 +89,11 @@ export function Navbar() {
               <img
                 src="/images/logo.png"
                 alt="UF BRAND"
+                width={200}
+                height={60}
                 className="h-10 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                fetchPriority="high"
+                decoding="async"
               />
             </Link>
           </div>
@@ -199,7 +203,7 @@ export function Navbar() {
         >
           <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 h-full flex flex-col">
             <div className="flex justify-between items-center h-24 border-b border-zinc-100">
-              <img src="/images/logo.png" alt="UF BRAND" className="h-10 w-auto object-contain" />
+              <img src="/images/logo.png" alt="UF BRAND" width={160} height={48} className="h-10 w-auto object-contain" decoding="async" />
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(false)}
@@ -272,7 +276,7 @@ export function Navbar() {
           >
             <div className="flex flex-col h-full">
               <div className="flex justify-between items-center p-5 border-b border-zinc-100">
-                <img src="/images/logo.png" alt="UF BRAND" className="h-9 w-auto object-contain" />
+                <img src="/images/logo.png" alt="UF BRAND" width={140} height={42} className="h-9 w-auto object-contain" decoding="async" />
                 <button
                   onClick={() => setIsMenuOpen(false)}
                   className="p-2 hover:bg-zinc-100 rounded-full transition-colors"

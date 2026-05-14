@@ -13,8 +13,11 @@ export function Hero() {
           <img
              src="/images/hero-brand.png"
              alt="UF Brand luxury ethnic fashion"
+             width={1920}
+             height={1080}
              className="w-full h-full object-cover object-[80%_20%] md:object-[60%_30%] scale-110 animate-ken-burns"
              fetchPriority="high"
+             decoding="async"
           />
           {/* Layered Overlays for Depth */}
           <div className="absolute inset-0 bg-black/40" />
@@ -100,24 +103,7 @@ export function Hero() {
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes ken-burns {
-          0% { transform: scale(1.1) translate(0, 0); }
-          100% { transform: scale(1) translate(-2%, -1%); }
-        }
-        .animate-ken-burns {
-          animation: ken-burns 20s ease-in-out infinite alternate;
-        }
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-          display: flex;
-          width: max-content;
-        }
-      `}} />
+      {/* Animations defined in globals.css via @theme keyframes */}
     </section>
   );
 }
